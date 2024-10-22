@@ -1,36 +1,26 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.27;
 
-
-import {Test, console} from "forge-std/Test.sol";
+import {Test, console2} from "forge-std/Test.sol";
 import {FundMe} from "../../src/FundMe.sol";
 import {FundMe_Fund, FundMe_Withdraw} from "../../script/Interactions.s.sol";
 import {FundMeScript} from "../../script/FundMe.s.sol";
 
-
 contract InteractionsTest is Test {
-
     FundMe private fundMe;
 
-
     function setUp() external {
-
-        if(block.chainid == 11155111) {
-
-            fundMe = FundMe(0xBC567b825B1Cd7D99e75F2D074e8293DaBF4Df01);
-            
+        if (block.chainid == 11155111) {
+            fundMe = FundMe(0x5d5baA64B2434946E33041Bfb918AFA248b60ad3);
         } else {
-
             FundMeScript fundMeScript = new FundMeScript();
 
             fundMe = fundMeScript.run();
         }
     }
 
-
     function testIntegrationUserCanFund() external {
-
         uint256 fundMeContractBeforeBalance = fundMe.getContractBalance();
 
         FundMe_Fund fundMe_fund_contract = new FundMe_Fund();
@@ -64,9 +54,7 @@ contract InteractionsTest is Test {
         assertEq(userAfterBalance, userBeforeBalance - fundMeContractAfterBalance);
     }
 
-
     function testIntegrationOwnerCanWithdraw() external {
-
         // Funding
 
         FundMe_Fund fundMe_fund_contract = new FundMe_Fund();

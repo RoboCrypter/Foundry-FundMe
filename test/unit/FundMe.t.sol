@@ -1,16 +1,13 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.20;
-
+pragma solidity ^0.8.27;
 
 import {FundMe} from "../../src/FundMe.sol";
-import {Test, console} from "forge-std/Test.sol";
+import {Test, console2} from "forge-std/Test.sol";
 import {FundMeScript} from "../../script/FundMe.s.sol";
-import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-
+import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 
 contract FundMeTest is Test {
-    
     FundMe private fundMe;
 
     address private activePriceFeedAddress;
@@ -19,24 +16,19 @@ contract FundMeTest is Test {
 
     address private USER = makeAddr("USER");
 
-
     event Fund(address indexed funder, uint256 indexed fundedAmount);
 
     event Withdraw(address indexed owner, uint256 indexed withdrawnAmount);
 
-
     modifier funded() {
-
         vm.prank(USER);
 
-        fundMe.fund{ value: FUND_AMOUNT }();
+        fundMe.fund{value: FUND_AMOUNT}();
 
         _;
     }
 
-
     function setUp() external {
-
         FundMeScript fundMeScript = new FundMeScript();
 
         fundMe = fundMeScript.run();
@@ -46,44 +38,34 @@ contract FundMeTest is Test {
         vm.deal(USER, 10 ether);
     }
 
-
-    function testMinimumAmountInUsd() external {
-
+    function testMinimumAmountInUsd() external view {
         uint256 minimumFundingAmount = fundMe.getMinimumFundingAmount();
 
         assertEq(minimumFundingAmount, 50e18);
     }
 
-
-    function testOwnerIsMsgSender() external {
-
+    function testOwnerIsMsgSender() external view {
         address owner = fundMe.getOwner();
 
         assertEq(owner, msg.sender);
     }
 
-
-    function testPriceFeedAddress() external {
-
+    function testPriceFeedAddress() external view {
         AggregatorV3Interface priceFeedAddress = fundMe.getPriceFeedAddress();
 
         assertEq(address(priceFeedAddress), activePriceFeedAddress);
     }
 
-
-    function testContractBalance() external {
-
+    function testContractBalance() external view {
         uint256 contractBalance = fundMe.getContractBalance();
 
         assertEq(contractBalance, 0);
     }
 
-
     function testFundFunction() external {
-
         vm.prank(USER);
 
-        fundMe.fund{ value: FUND_AMOUNT }();
+        fundMe.fund{value: FUND_AMOUNT}();
 
         address funder = fundMe.getFunder(0);
 
@@ -102,29 +84,23 @@ contract FundMeTest is Test {
         assertEq(contractBalance, FUND_AMOUNT);
     }
 
-
     function testFundFunctionByFundingLessThanMinimumAmount() external {
+        vm.expectRevert(FundMe.FundMe__Less_than_minimum_funding_amount.selector);
 
-        vm.expectRevert();
-
-        fundMe.fund{ value: 0.028 ether }();
+        fundMe.fund{value: 0.0028 ether}();
     }
 
-
     function testFundEvent() external {
-
         vm.expectEmit(true, true, false, true);
 
         emit Fund(USER, FUND_AMOUNT);
 
         vm.prank(USER);
 
-        fundMe.fund{ value: FUND_AMOUNT }();
+        fundMe.fund{value: FUND_AMOUNT}();
     }
 
-
     function testWithdrawFunction() external funded {
-
         uint256 fundMeContractBeforeBalance = fundMe.getContractBalance();
 
         uint256 ownerBeforeBalance = fundMe.getOwner().balance;
@@ -144,19 +120,15 @@ contract FundMeTest is Test {
         assertEq(ownerAfterBalance, ownerBeforeBalance + fundMeContractBeforeBalance);
     }
 
-
     function testWithdrawFunctionByWithdrawingAsNonOwner() external {
-
-        vm.expectRevert();
+        vm.expectRevert(FundMe.FundMe__Not_owner.selector);
 
         vm.prank(USER);
 
         fundMe.withdraw();
     }
 
-
     function testWithdrawEvent() external funded {
-
         vm.expectEmit(true, true, false, true);
 
         emit Withdraw(msg.sender, FUND_AMOUNT);
@@ -166,20 +138,17 @@ contract FundMeTest is Test {
         fundMe.withdraw();
     }
 
-
     function testFundAndWithdrawFunctionByFundingThroughMultipleFundersAndThenWithdrawing() external {
-
         // Funding
 
         uint160 startingNumber = 1;
 
         uint160 totalNumberOfFunders = 10;
 
-        for(uint160 i = startingNumber; i <= totalNumberOfFunders; i++) {
-
+        for (uint160 i = startingNumber; i <= totalNumberOfFunders; i++) {
             hoax(address(i), 1 ether);
 
-            fundMe.fund{ value: FUND_AMOUNT }();
+            fundMe.fund{value: FUND_AMOUNT}();
         }
 
         assertEq(fundMe.getContractBalance(), FUND_AMOUNT * totalNumberOfFunders);
