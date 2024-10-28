@@ -111,7 +111,7 @@ In memory node started v0.1.0-alpha.22:
 ### Deploy to local zkSync node
 
 ```bash
-forge create src/FundMe.sol:FundMe --rpc-url http://127.0.0.1:8011 --private-key $(DEFAULT_ZKSYNC_LOCAL_KEY) --constructor-args $(shell forge create test/mock/MockV3Aggregator.sol:MockV3Aggregator --rpc-url http://127.0.0.1:8011 --private-key $(DEFAULT_ZKSYNC_LOCAL_KEY) --constructor-args 8 200000000000 --legacy --zksync | grep "Deployed to:" | awk '{print $$3}') --legacy --zksync
+forge create src/FundMe.sol:FundMe --rpc-url $ZKSYNC_LOCAL_RPC_URL --private-key $ZKSYNC_LOCAL_PRIVATE_KEY --constructor-args $(shell forge create lib/chainlink/contracts/src/v0.8/tests/MockV3Aggregator.sol:MockV3Aggregator --rpc-url $ZKSYNC_LOCAL_RPC_URL --private-key $ZKSYNC_LOCAL_PRIVATE_KEY --constructor-args 8 200000000000 --legacy --zksync | grep "Deployed to:" | awk '{print $$3}') --legacy --zksync
 ```
 
 This will deploy a mock price feed and a fund me contract to the zkSync node.
@@ -154,13 +154,13 @@ Using cast, deployed on a testnet example:
 ### Fund
 
 ```
-cast send <FUNDME_CONTRACT_ADDRESS> "fund()" --value 0.1ether --private-key <PRIVATE_KEY>
+cast send <FUNDME_CONTRACT_ADDRESS> "fund()" --value 0.1ether --rpc-url $SEPOLIA_RPC_URL --private-key <PRIVATE_KEY>
 ```
 
 ### Withdraw
 
 ```
-cast send <FUNDME_CONTRACT_ADDRESS> "withdraw()"  --private-key <PRIVATE_KEY>
+cast send <FUNDME_CONTRACT_ADDRESS> "withdraw()" --rpc-url $SEPOLIA_RPC_URL  --private-key <PRIVATE_KEY>
 ```
 
 or
