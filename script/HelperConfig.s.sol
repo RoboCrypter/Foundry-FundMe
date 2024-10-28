@@ -8,9 +8,9 @@ import {MockV3Aggregator} from "@chainlink/contracts/src/v0.8/tests/MockV3Aggreg
 contract HelperConfig is Script {
     NetworkConfig public activeNetworkConfig;
 
-    uint8 private constant DECIMALS = 8;  // We are giving "8" because "ETH" has "8 decimals"
+    uint8 private constant DECIMALS = 8; // We are giving "8" because "ETH" has "8 decimals"
 
-    int256 private constant INITIAL_ANSWER = 2000e8;  // Means "ETH" price is "2000 USD" currently at this time.
+    int256 private constant INITIAL_ANSWER = 2000e8; // Means "ETH" price is "2000 USD" currently at this time.
 
     struct NetworkConfig {
         address priceFeedAddress;

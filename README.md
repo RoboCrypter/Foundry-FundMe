@@ -1,5 +1,7 @@
 # Foundry Fund Me
 
+Deployed [FundMe](https://sepolia.etherscan.io/address/0x5d5baa64b2434946e33041bfb918afa248b60ad3) contract on Sepolia : 0x5d5baA64B2434946E33041Bfb918AFA248b60ad3
+
 # Getting Started
 
 ## Requirements
@@ -50,7 +52,7 @@ or
 forge test --mt testFunctionName
 ```
 
-### To run test on a fork test net
+### To run test on a fork testnet
 
 ```
 forge test --fork-url $SEPOLIA_RPC_URL
@@ -140,14 +142,14 @@ Head over to [faucets.chain.link](https://faucets.chain.link/) and get some test
 ### 3. Deploy and Verify
 
 ```
-forge script script/FundMe.s.sol --rpc-url $SEPOLIA_RPC_URL --private-key $PRIVATE_KEY --broadcast --verify --etherscan-api-key $ETHERSCAN_API_KEY
+forge script script/FundMe.s.sol --rpc-url $SEPOLIA_RPC_URL --private-key $PRIVATE_KEY --verify --etherscan-api-key $ETHERSCAN_API_KEY --broadcast
 ```
 
 ## Scripts
 
 After deploying to a testnet or local net, you can run the scripts. 
 
-Using cast, deployed locally example: 
+Using cast, deployed on a testnet example:
 
 ### Fund
 
